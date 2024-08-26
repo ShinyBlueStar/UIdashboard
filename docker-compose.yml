@@ -50,34 +50,11 @@ services:
     depends_on:
       - my-h2
 
-  frontend:
-    image: uimanager
-    ports:
-      - "80:80"
-#    networks:
-#      - app-network
-    depends_on:
-      - nginx
-
-  #    depends_on:
-#      - oracle-db
-
-  #  environment:
-#    SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
-#    SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
-#    SPRING_DATASOURCE_USERNAME: sa
-#    SPRING_DATASOURCE_PASSWORD:
-#    SPRING_H2_CONSOLE_ENABLED: "true"
-
   my-h2:
     image: buildo/h2database
     container_name: my-h2
     ports:
       - "8082:8082"
-
-#networks:
-#  app-network
-#    driver: bridge
 
 volumes:
   db-data:
