@@ -1,0 +1,83 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "9090:80"
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+#    networks:
+#      - app-network
+    depends_on:
+      - task-dashboard-app-1
+      - task-dashboard-app-2
+
+  task-dashboard-app-1:
+    image: task-dashboard-app1:latest
+    hostname: task-dashboard-app-1
+    ports:
+      - "9091:8080"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb  # H2 in-memory database
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD:
+      SPRING_H2_CONSOLE_ENABLED: "true"
+#    networks:
+#      - app-network
+    depends_on:
+      - my-h2
+
+  task-dashboard-app-2:
+    image: task-dashboard-app2:latest
+    hostname: task-dashboard-app-2
+    ports:
+      - "9092:8080"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb  # H2 in-memory database
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD:
+      SPRING_H2_CONSOLE_ENABLED: "true"
+#    networks:
+#      - app-network
+    depends_on:
+      - my-h2
+
+  frontend:
+    image: uimanager
+    ports:
+      - "80:80"
+#    networks:
+#      - app-network
+    depends_on:
+      - nginx
+
+  #    depends_on:
+#      - oracle-db
+
+  #  environment:
+#    SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+#    SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+#    SPRING_DATASOURCE_USERNAME: sa
+#    SPRING_DATASOURCE_PASSWORD:
+#    SPRING_H2_CONSOLE_ENABLED: "true"
+
+  my-h2:
+    image: buildo/h2database
+    container_name: my-h2
+    ports:
+      - "8082:8082"
+
+#networks:
+#  app-network
+#    driver: bridge
+
+volumes:
+  db-data:
